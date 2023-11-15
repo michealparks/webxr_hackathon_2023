@@ -7,6 +7,9 @@ export default defineConfig({
 		mkcert(),
 		sveltekit(),
 	],
+	server: {
+		port: 8080,
+	},
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	}
