@@ -5,8 +5,6 @@
 
   const { scene, renderer } = useThrelte()
 
-  renderer.setClearColor(0x000000)
-
   const mesh1 = new THREE.Mesh(
     new THREE.BoxGeometry(0.5, 0.5, 0.5),
     new THREE.MeshStandardMaterial(),
