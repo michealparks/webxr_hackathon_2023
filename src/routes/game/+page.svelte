@@ -1,7 +1,6 @@
 <script lang="ts">
   import { World, Debug } from '@threlte/rapier'
   import { createRatk } from '$lib/ratk'
-  import XR from '$lib/components/XR.svelte'
 	import Planes from '$lib/components/Planes.svelte'
 	import Portal from '$lib/components/Portal.svelte'
   import PortalScene from '$lib/components/PortalScene.svelte'
@@ -23,10 +22,7 @@
   <StaticBodies />
   <Bullets />
   
-  <XR />
-
   {#if debug}
     <Debug />
   {/if}
 </World>
-
