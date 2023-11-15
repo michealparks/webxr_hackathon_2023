@@ -1,14 +1,14 @@
 <script lang="ts">
-	import * as THREE from 'three';
-	import { T, injectPlugin } from '@threlte/core';
+	import * as THREE from 'three'
+	import { T, injectPlugin } from '@threlte/core'
 
-	let portal = new THREE.Mesh();
-	let material = new THREE.MeshPhongMaterial();
-	material.depthWrite = false;
-	material.stencilWrite = true;
-	material.stencilRef = 1;
-	material.stencilFunc = THREE.AlwaysStencilFunc;
-	material.stencilZPass = THREE.ReplaceStencilOp;
+	let portal = new THREE.Mesh()
+	let material = new THREE.MeshPhongMaterial()
+	material.depthWrite = false
+	material.stencilWrite = true
+	material.stencilRef = 1
+	material.stencilFunc = THREE.AlwaysStencilFunc
+	material.stencilZPass = THREE.ReplaceStencilOp
 
 	injectPlugin('portal', ({ ref }) => {
 		let currentRef = ref;
@@ -17,32 +17,44 @@
 		if (ref.uuid === portal.uuid) return;
 
 		const setStencilProps = (mesh: THREE.Mesh) => {
-			const { material } = mesh;
+			const { material } = mesh
 
 			if (material instanceof THREE.Material) {
-				material.stencilWrite = true;
-				material.stencilRef = 1;
-				material.stencilFunc = THREE.EqualStencilFunc;
+				material.stencilWrite = true
+				material.stencilRef = 1
+				material.stencilFunc = THREE.EqualStencilFunc
 			}
-		};
+		}
 
-		setStencilProps(ref);
+		setStencilProps(ref)
 
 		return {
 			onRefChange: (ref) => {
-				currentRef = ref;
-				setStencilProps(currentRef);
+				currentRef = ref
+				setStencilProps(currentRef)
 			},
 			onPropsChange: () => {
-				setStencilProps(currentRef);
+				setStencilProps(currentRef)
 			}
-		};
-	});
+		}
+	})
+
+  const radius = 0.7
+  const offsetY = 0.2
 </script>
 
-<T is={portal}>
-	<T is={material} />
-	<T.PlaneGeometry />
-</T>
+<T.Group>
+  <T.ArrowHelper />
 
-<slot />
+  <T is={portal} position.y={radius + offsetY}>
+    <T is={material} />
+    <T.CircleGeometry
+      args={[radius, 64]}
+    />
+  </T>
+
+  <T.Group position={[0, 0, -1]}>
+    <slot />
+  </T.Group>
+</T.Group>
+

@@ -1,18 +1,19 @@
 <script lang='ts'>
   import { T, useFrame } from '@threlte/core'
+  import Debug from './Debug.svelte'
 
-  let mesh2: THREE.Mesh
+  let mesh: THREE.Mesh
 
   useFrame(() => {
-    if (!mesh2) return
+    if (!mesh) return
 
-    mesh2.rotation.x += 0.01
-    mesh2.rotation.y += 0.01
+    mesh.rotation.x += 0.01
+    mesh.rotation.y += 0.01
   })
 </script>
 
 <T.Mesh
-  bind:ref={mesh2}
+  bind:ref={mesh}
   name="box"
   position={[0, 0, -2]}
 >
@@ -22,3 +23,5 @@
 
 <T.AmbientLight />
 <T.DirectionalLight />
+
+<Debug />
