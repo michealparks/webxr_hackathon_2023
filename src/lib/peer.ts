@@ -35,6 +35,7 @@ export const initPeer = () => {
 	
 	connection.onmessage = function (event) {
 		const { message, array } = event.data
+		console.log(event.data)
 
 		switch (message) {
 			case 'update': {
@@ -55,13 +56,15 @@ export const initPeer = () => {
 				peer.controllers.right.quaternion.set(array[offset], array[offset + 1], array[offset + 2], array[offset + 3])
 				offset += 4
 
+				console.log(peer)
+
 				break
 			}
 			case 'ready': {
 				// @todo
 				// start sending updates  each frame, need way to connect to the update function, useFrame??
 				const dummyUpdate = new Float32Array(21).fill(2);
-				connection.send({ 'update': String, dummyUpdate })
+				connection.send({ message: 'update', array: dummyUpdate })
 				break
 			}
 			case 'fire-weapon': {
@@ -72,15 +75,17 @@ export const initPeer = () => {
 	}
 
 	connection.openOrJoin('your-room-id', () => {
-		console.log("here");
+		// console.log(connection);
 		// connection.send('hello everyone');
-		const allParticipants = connection.getAllParticipants()
-		if (allParticipants.length === 0) {
-			// retry
-			console.log("No Players found");
-			return;
-		}
-		connection.send('ready')
+		// const allParticipantsLength = connection.getAllParticipants().length
+		// const allParticipantsLength = connection.peers.getLength()
+		// console.log(allParticipantsLength)
+		// if (allParticipantsLength === 0) {
+		// 	// retry
+		// 	console.log("No Players found");
+		// 	return;
+		// }
+		connection.send({message: 'ready', array: [0]})
 	})
 	// connection.onopen = (event) => {
 		
