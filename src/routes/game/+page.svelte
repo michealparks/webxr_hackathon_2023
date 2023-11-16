@@ -11,6 +11,7 @@
 	import HandEvents from './components/HandEvents.svelte'
 	import Enemy from './components/Enemy.svelte'
 	import Target from './components/Target.svelte'
+	import Particles from './components/Particles.svelte'
 
 	gameState.reset()
 
@@ -37,6 +38,7 @@
 <Planes>
 	<Portal>
 		<PortalScene>
+			<Particles />
 			<Target />
 			<Target position={[0.5, 0.5, -0.5]} delay={1000} />
 			<Target position={[-0.5, 0.25, -1]} delay={2000} />
