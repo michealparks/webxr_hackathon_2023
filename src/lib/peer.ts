@@ -1,21 +1,8 @@
-import * as THREE from 'three'
+import { useFrame } from '@threlte/core'
+import { createPlayerState } from './utils'
+import { useHeadset, useController, useHand, useXR } from '@threlte/xr'
 
-export const peer = {
-	headset: {
-		position: new THREE.Vector3(),
-		quaternion: new THREE.Quaternion()
-	},
-	controllers: {
-		left: {
-			position: new THREE.Vector3(),
-			quaternion: new THREE.Quaternion()
-		},
-		right: {
-			position: new THREE.Vector3(),
-			quaternion: new THREE.Quaternion()
-		}
-	}
-}
+export const peer = createPlayerState()
 
 export const initPeer = () => {
 	const connection = new globalThis.RTCMultiConnection()
@@ -64,4 +51,25 @@ export const initPeer = () => {
 	}
 
 	connection.openOrJoin('your-room-id')
+
+	const player = createPlayerState()
+	const { isHandTracking } = useXR()
+	const headset = useHeadset()
+	const leftCtrl = useController('left')
+	const rightCtrl = useController('right')
+
+	useFrame(() => {
+		if (!leftCtrl.current || !rightCtrl.current) return
+
+		player.headset.position.copy(headset.position)
+		player.headset.quaternion.copy(headset.quaternion)
+	
+		player.controllers.left.position.copy(leftCtrl.current.grip.position)
+		player.controllers.right.position.copy(rightCtrl.current.grip.position)
+
+		player.controllers.left.quaternion.copy(leftCtrl.current.grip.quaternion)
+		player.controllers.right.quaternion.copy(rightCtrl.current.grip.quaternion)
+
+		// send "player" to other server
+	})
 }

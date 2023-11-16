@@ -10,24 +10,28 @@
 	import Headset from './components/Headset.svelte'
 	import HandEvents from './components/HandEvents.svelte'
 	import Enemy from './components/Enemy.svelte'
+	import Target from './components/Target.svelte'
 
 	createRatk()
 
 	const debug = true
+	const peer = true
 
-	onMount(() => {
-		initPeer()
-	})
+	if (peer) initPeer()
 </script>
 
 <Headset />
+
 <HandEvents />
 
 <Enemy />
 
+
 <Planes>
 	<Portal>
-		<PortalScene />
+		<PortalScene>
+			<Target />
+		</PortalScene>
 	</Portal>
 </Planes>
 
