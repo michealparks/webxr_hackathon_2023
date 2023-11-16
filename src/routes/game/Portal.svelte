@@ -2,7 +2,10 @@
 	import * as THREE from 'three'
 	import { T, injectPlugin } from '@threlte/core'
 	import { Collider, RigidBody, useRapier } from '@threlte/rapier'
-	import type { RigidBody as RapierRigidBody, Collider as RapierCollider } from '@dimforge/rapier3d-compat'
+	import type {
+		RigidBody as RapierRigidBody,
+		Collider as RapierCollider
+	} from '@dimforge/rapier3d-compat'
 	import { useFixed } from './hooks/useFixed'
 	import { inPortal } from '$lib/state'
 
@@ -50,7 +53,10 @@
 	const radius = 0.7
 	const offsetY = 0.2
 
-	const handlePortalEnter = (event: { targetCollider: RapierCollider; targetRigidBody: RigidBody | null }) => {
+	const handlePortalEnter = (event: {
+		targetCollider: RapierCollider
+		targetRigidBody: RigidBody | null
+	}) => {
 		inPortal.set(event.targetRigidBody.handle, true)
 	}
 

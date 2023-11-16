@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
+	import { initPeer } from '$lib/peer'
 	import { createRatk } from '$lib/ratk'
 	import Planes from './Planes.svelte'
 	import Portal from './Portal.svelte'
@@ -10,6 +12,10 @@
 	createRatk()
 
 	const debug = true
+
+	onMount(() => {
+		initPeer()
+	})
 </script>
 
 <Headset />

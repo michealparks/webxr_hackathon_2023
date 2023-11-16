@@ -47,6 +47,7 @@
 		"install": "^0.13.0",
 		"npm": "^10.2.3",
 		"ratk": "^0.3.0",
+		"rtcmulticonnection": "^3.7.1",
 		"three": "^0.158.0",
 		"vite-plugin-mkcert": "^1.16.0"
 	}

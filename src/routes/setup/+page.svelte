@@ -1,5 +1,5 @@
-<script lang='ts'>
-  import { Text } from "@threlte/extras";
+<script lang="ts">
+	import { Text } from '@threlte/extras'
 </script>
 
-<Text text='hi! setup' />
+<Text text="hi! setup" />

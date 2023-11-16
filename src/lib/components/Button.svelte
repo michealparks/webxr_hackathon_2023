@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher } from 'svelte'
 	import { T } from '@threlte/core'
 	import { RoundedBoxGeometry, Text } from '@threlte/extras'
 	import { Box } from '@threlte/flex'
@@ -12,7 +12,7 @@
 	export let depth = 0.2
 	export let text = 'Open Tutorial'
 
-  const dispatch = createEventDispatcher()
+	const dispatch = createEventDispatcher()
 
 	let hovering = false
 
@@ -29,9 +29,9 @@
 	<T.Mesh
 		position={[positionX, positionY, positionZ]}
 		on:click={(e) => {
-      e.stopPropagation()
-      dispatch('click')
-    }}
+			e.stopPropagation()
+			dispatch('click')
+		}}
 		on:pointerenter={onPointerEnter}
 		on:pointerleave={onPointerLeave}
 	>

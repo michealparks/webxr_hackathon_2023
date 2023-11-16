@@ -1,24 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>three.js webxr input events dispatcher demo</title>
-    <style></style>
-  </head>
-  <body>
-        <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-      <script type="importmap">
-        {
-          "imports": {
-            "three": "https://unpkg.com/three@0.146.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.146.0/examples/jsm/"
-          }
-        }
-      </script>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>three.js webxr input events dispatcher demo</title>
+		<style></style>
+	</head>
+	<body>
+		<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://unpkg.com/three@0.146.0/build/three.module.js",
+					"three/addons/": "https://unpkg.com/three@0.146.0/examples/jsm/"
+				}
+			}
+		</script>
 
-<!--       <script type="importmap">
+		<!--       <script type="importmap">
         {
           "imports": {
             "three": "https://unpkg.com/three@0.145.0/build/three.module.js",
@@ -28,110 +28,115 @@
       </script> -->
 
 		<script type="module">
+			import * as THREE from 'three'
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+			import { VRButton } from 'three/addons/webxr/VRButton.js'
+			import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js'
+			import { XRHandModelFactory } from 'three/addons/webxr/XRHandModelFactory.js'
 
-import * as THREE from 'three';
-			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-			import { VRButton } from 'three/addons/webxr/VRButton.js';
-			import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
-			import { XRHandModelFactory } from 'three/addons/webxr/XRHandModelFactory.js';
+			import {
+				update as handyUpdate,
+				loadPose as handyLoadPose,
+				dumpHands as handyDumpHands
+			} from 'https://cdn.jsdelivr.net/npm/handy-work@1.4.0/build/esm/handy-work.standalone.js'
 
-            import { update as handyUpdate,
-            loadPose as handyLoadPose,
-            dumpHands as handyDumpHands} from 'https://cdn.jsdelivr.net/npm/handy-work@1.4.0/build/esm/handy-work.standalone.js'
-
-            console.log(handyUpdate);
+			console.log(handyUpdate)
 			// switched fist and relax upstream
-            handyLoadPose('relax', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/fist.handpose');
-            handyLoadPose('fist', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/relax.handpose');
-            // handyLoadPose('point', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/point.handpose');
+			handyLoadPose(
+				'relax',
+				'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/fist.handpose'
+			)
+			handyLoadPose(
+				'fist',
+				'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/relax.handpose'
+			)
+			// handyLoadPose('point', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/point.handpose');
 
 			// handyLoadPose('shootStart', 'http://localhost:8080/handgestures/shootStart2.handpose');
 
-            // // loadPose('relax', POSE_FOLDER + 'relax.handpose');
-            // // loadPose('fist', './fist.handpose');
-            // loadPose('fist', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/fist.handpose');
-            // // loadPose('flat', POSE_FOLDER + 'flat.handpose');
-            // // loadPose('point', POSE_FOLDER + 'point.handpose');
-            // // loadPose('horns', POSE_FOLDER + 'horns.handpose');
-            // // loadPose('shaka', POSE_FOLDER + 'shaka.handpose');
-            // // loadPose('vulcan', POSE_FOLDER + 'vulcan.handpose');
+			// // loadPose('relax', POSE_FOLDER + 'relax.handpose');
+			// // loadPose('fist', './fist.handpose');
+			// loadPose('fist', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/fist.handpose');
+			// // loadPose('flat', POSE_FOLDER + 'flat.handpose');
+			// // loadPose('point', POSE_FOLDER + 'point.handpose');
+			// // loadPose('horns', POSE_FOLDER + 'horns.handpose');
+			// // loadPose('shaka', POSE_FOLDER + 'shaka.handpose');
+			// // loadPose('vulcan', POSE_FOLDER + 'vulcan.handpose');
 
+			let container
+			let camera, scene, renderer
+			let hand1, hand2
+			let controller1, controller2
+			let controllerGrip1, controllerGrip2
 
-			let container;
-			let camera, scene, renderer;
-			let hand1, hand2;
-			let controller1, controller2;
-			let controllerGrip1, controllerGrip2;
+			let controls
 
-			let controls;
-
-			init();
-			animate();
+			init()
+			animate()
 
 			function init() {
+				container = document.createElement('div')
+				document.body.appendChild(container)
 
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
+				scene = new THREE.Scene()
+				scene.background = new THREE.Color(0x444444)
 
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0x444444 );
+				camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10)
+				camera.position.set(0, 1.6, 3)
 
-				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10 );
-				camera.position.set( 0, 1.6, 3 );
+				controls = new OrbitControls(camera, container)
+				controls.target.set(0, 1.6, 0)
+				controls.update()
 
-				controls = new OrbitControls( camera, container );
-				controls.target.set( 0, 1.6, 0 );
-				controls.update();
+				const floorGeometry = new THREE.PlaneGeometry(4, 4)
+				const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x666666 })
+				const floor = new THREE.Mesh(floorGeometry, floorMaterial)
+				floor.rotation.x = -Math.PI / 2
+				floor.receiveShadow = true
+				scene.add(floor)
 
-				const floorGeometry = new THREE.PlaneGeometry( 4, 4 );
-				const floorMaterial = new THREE.MeshStandardMaterial( { color: 0x666666 } );
-				const floor = new THREE.Mesh( floorGeometry, floorMaterial );
-				floor.rotation.x = - Math.PI / 2;
-				floor.receiveShadow = true;
-				scene.add( floor );
+				scene.add(new THREE.HemisphereLight(0xbcbcbc, 0xa5a5a5, 3))
 
-				scene.add( new THREE.HemisphereLight( 0xbcbcbc, 0xa5a5a5, 3 ) );
-
-				const light = new THREE.DirectionalLight( 0xffffff, 3 );
-				light.position.set( 0, 6, 0 );
-				light.castShadow = true;
-				light.shadow.camera.top = 2;
-				light.shadow.camera.bottom = - 2;
-				light.shadow.camera.right = 2;
-				light.shadow.camera.left = - 2;
-				light.shadow.mapSize.set( 4096, 4096 );
-				scene.add( light );
+				const light = new THREE.DirectionalLight(0xffffff, 3)
+				light.position.set(0, 6, 0)
+				light.castShadow = true
+				light.shadow.camera.top = 2
+				light.shadow.camera.bottom = -2
+				light.shadow.camera.right = 2
+				light.shadow.camera.left = -2
+				light.shadow.mapSize.set(4096, 4096)
+				scene.add(light)
 
 				//
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.shadowMap.enabled = true;
-				renderer.xr.enabled = true;
+				renderer = new THREE.WebGLRenderer({ antialias: true })
+				renderer.setPixelRatio(window.devicePixelRatio)
+				renderer.setSize(window.innerWidth, window.innerHeight)
+				renderer.shadowMap.enabled = true
+				renderer.xr.enabled = true
 
-				container.appendChild( renderer.domElement );
+				container.appendChild(renderer.domElement)
 
-				document.body.appendChild( VRButton.createButton( renderer ) );
+				document.body.appendChild(VRButton.createButton(renderer))
 
 				// controllers
 
-				controller1 = renderer.xr.getController( 0 );
-				scene.add( controller1 );
+				controller1 = renderer.xr.getController(0)
+				scene.add(controller1)
 
-				controller2 = renderer.xr.getController( 1 );
-				scene.add( controller2 );
+				controller2 = renderer.xr.getController(1)
+				scene.add(controller2)
 
-				const controllerModelFactory = new XRControllerModelFactory();
-				const handModelFactory = new XRHandModelFactory();
+				const controllerModelFactory = new XRControllerModelFactory()
+				const handModelFactory = new XRHandModelFactory()
 
 				// Hand 1
-				controllerGrip1 = renderer.xr.getControllerGrip( 0 );
-				controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
-				scene.add( controllerGrip1 );
+				controllerGrip1 = renderer.xr.getControllerGrip(0)
+				controllerGrip1.add(controllerModelFactory.createControllerModel(controllerGrip1))
+				scene.add(controllerGrip1)
 
-				hand1 = renderer.xr.getHand( 0 );
-				hand1.add( handModelFactory.createHandModel( hand1, "mesh" ) );
+				hand1 = renderer.xr.getHand(0)
+				hand1.add(handModelFactory.createHandModel(hand1, 'mesh'))
 
 				// hand1.addEventListener( 'pinchend', function (data) {
 
@@ -142,17 +147,16 @@ import * as THREE from 'three';
 				// 	}, 3000);
 				// } );
 
-
-				scene.add( hand1 );
+				scene.add(hand1)
 
 				// Hand 2
-				controllerGrip2 = renderer.xr.getControllerGrip( 1 );
-				controllerGrip2.add( controllerModelFactory.createControllerModel( controllerGrip2 ) );
-				scene.add( controllerGrip2 );
+				controllerGrip2 = renderer.xr.getControllerGrip(1)
+				controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2))
+				scene.add(controllerGrip2)
 
-				hand2 = renderer.xr.getHand( 1 );
-				hand2.add( handModelFactory.createHandModel( hand2, "mesh" ) );
-				scene.add( hand2 );
+				hand2 = renderer.xr.getHand(1)
+				hand2.add(handModelFactory.createHandModel(hand2, 'mesh'))
+				scene.add(hand2)
 
 				// hand2.addEventListener( 'pinchend', function (data) {
 
@@ -169,57 +173,55 @@ import * as THREE from 'three';
 
 				//
 
-				const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+				const geometry = new THREE.BufferGeometry().setFromPoints([
+					new THREE.Vector3(0, 0, 0),
+					new THREE.Vector3(0, 0, -1)
+				])
 
-				const line = new THREE.Line( geometry );
-				line.name = 'line';
-				line.scale.z = 5;
+				const line = new THREE.Line(geometry)
+				line.name = 'line'
+				line.scale.z = 5
 
-				controller1.add( line.clone() );
-				controller2.add( line.clone() );
+				controller1.add(line.clone())
+				controller2.add(line.clone())
 
 				//
 
-				window.addEventListener( 'resize', onWindowResize );
-
+				window.addEventListener('resize', onWindowResize)
 			}
 
 			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight
+				camera.updateProjectionMatrix()
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
+				renderer.setSize(window.innerWidth, window.innerHeight)
 			}
 			//
 
 			function animate() {
-
-				renderer.setAnimationLoop( render );
-
+				renderer.setAnimationLoop(render)
 			}
 
 			function render(timestamp, frame) {
-                // console.log(frame);
-                if (renderer.xr.isPresenting) {
-                    const session = renderer.xr.getSession();
-                    const referenceSpace = renderer.xr.getReferenceSpace();
-                    // Object schema example returned each XRFrame in the callback from the handyUpdate fn
-                    // {
-                    //     "handedness": "left",
-                    //     "distances": [
-                    //         [
-                    //             "point",
-                    //             0.11384780004079391
-                    //         ],
-                    //         [
-                    //             "fist",
-                    //             0.12457690381133224
-                    //         ]
-                    //     ]
-                    // }
-					
+				// console.log(frame);
+				if (renderer.xr.isPresenting) {
+					const session = renderer.xr.getSession()
+					const referenceSpace = renderer.xr.getReferenceSpace()
+					// Object schema example returned each XRFrame in the callback from the handyUpdate fn
+					// {
+					//     "handedness": "left",
+					//     "distances": [
+					//         [
+					//             "point",
+					//             0.11384780004079391
+					//         ],
+					//         [
+					//             "fist",
+					//             0.12457690381133224
+					//         ]
+					//     ]
+					// }
+
 					// session.inputSources -> find the left and right input sources and only pass the correct input source? so that only one hand gesture gets saved to file?
 
 					// MENTIONED in the readme, requires both hands
@@ -242,28 +244,27 @@ import * as THREE from 'three';
 					// 		// }
 					// 	})
 					// }
-					handyUpdate(session.inputSources, referenceSpace, frame, ({handedness, distances}) => {
+					handyUpdate(session.inputSources, referenceSpace, frame, ({ handedness, distances }) => {
 						// console.log("in update");
 						// console.log(handedness);
 						// console.log(distances);
 						// // do something with poses and distances Array of array
 						// // threshold for checking if making this pose in this frame, 0.8?
-						if (handedness === "right") {
-							let minDistance = 10;
-							let minPose = null;
+						if (handedness === 'right') {
+							let minDistance = 10
+							let minPose = null
 							distances.forEach(([pose, distance]) => {
 								// if (pose === "shootStart" && distance < 0.05) console.log(distance);
 								// if (pose === "point") console.log(distance);
 								// if (pose === "fist") console.log(distance);
-								if (distance < minDistance) minPose = pose;
-							});
-							console.log(minPose);
+								if (distance < minDistance) minPose = pose
+							})
+							console.log(minPose)
 						}
 					})
-                }
+				}
 
-				renderer.render( scene, camera );
-
+				renderer.render(scene, camera)
 			}
 		</script>
 	</body>

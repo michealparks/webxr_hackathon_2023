@@ -7,7 +7,7 @@
 	import { Flex, tailwindParser } from '@threlte/flex'
 	import Button from '$lib/components/Button.svelte'
 	import { pointerControls } from '@threlte/xr'
-  import { goto } from '$app/navigation'
+	import { goto } from '$app/navigation'
 
 	pointerControls('left')
 	pointerControls('right')
@@ -19,7 +19,6 @@
 		await tick()
 		renderer.render(scene, camera.current)
 	})
-  
 </script>
 
 <T.Group position={[0, 1.8, 0]}>
@@ -37,7 +36,7 @@
 			height={0.3}
 			depth={0.01}
 			text="Show tutorial"
-      on:click={() => goto('/tutorial')}
+			on:click={() => goto('/tutorial')}
 		/>
 
 		<Button
@@ -48,7 +47,7 @@
 			height={0.3}
 			depth={0.01}
 			text="Start playing"
-      on:click={() => goto('/setup')}
+			on:click={() => goto('/setup')}
 		/>
 	</Flex>
 </T.Group>
