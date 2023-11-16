@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { createRatk } from '$lib/ratk'
-	import Planes from '$lib/components/Planes.svelte'
-	import Portal from '$lib/components/Portal.svelte'
-	import PortalScene from '$lib/components/PortalScene.svelte'
-	import Bullets from '$lib/components/Bullets.svelte'
-	import PhysicsDebug from '$lib/components/PhysicsDebug.svelte'
-	import Headset from '$lib/components/Headset.svelte'
+	import Planes from './Planes.svelte'
+	import Portal from './Portal.svelte'
+	import PortalScene from './PortalScene.svelte'
+	import Bullets from './Bullets.svelte'
+	import PhysicsDebug from './PhysicsDebug.svelte'
+	import Headset from './Headset.svelte'
 
 	createRatk()
 

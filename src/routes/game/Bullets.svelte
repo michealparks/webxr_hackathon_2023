@@ -5,7 +5,7 @@
 	import { RigidBody, Collider } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
 	import { useController } from '@threlte/xr'
-	import { useFixed } from '$lib/hooks/useFixed'
+	import { useFixed } from './hooks/useFixed'
 	import { inPortal } from '$lib/state'
 
 	const leftPad = useGamepad({ hand: 'left', xr: true })

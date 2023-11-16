@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as THREE from 'three'
 	import { T } from '@threlte/core'
-	import { AutoColliders, Collider } from '@threlte/rapier'
+	import { Collider } from '@threlte/rapier'
 	import { useRatk } from '$lib/ratk'
 	import { useRapier } from '@threlte/rapier'
 	import { hideBody } from './physics'

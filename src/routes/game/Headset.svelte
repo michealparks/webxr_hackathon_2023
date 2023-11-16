@@ -2,7 +2,7 @@
 	import { Collider, RigidBody } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
 	import { useHeadset } from '@threlte/xr'
-	import { useFixed } from '$lib/hooks/useFixed'
+	import { useFixed } from './hooks/useFixed'
 
 	let rigidBody: RapierRigidBody
 

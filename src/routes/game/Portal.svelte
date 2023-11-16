@@ -3,7 +3,7 @@
 	import { T, injectPlugin } from '@threlte/core'
 	import { Collider, RigidBody, useRapier } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody, Collider as RapierCollider } from '@dimforge/rapier3d-compat'
-	import { useFixed } from '$lib/hooks/useFixed'
+	import { useFixed } from './hooks/useFixed'
 	import { inPortal } from '$lib/state'
 
 	const { world } = useRapier()
