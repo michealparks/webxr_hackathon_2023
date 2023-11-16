@@ -21,21 +21,24 @@
           data: true
       };
       
-      connection.onopen = function(event) {
-          connection.send('hello everyone');
-          connection.getAllParticipants().forEach(function(participantId) {
-            console.log(participantId);
-            // var user = connection.peers[participantId];
-            // var hisFullName = user.extra.fullName;
-            // var hisUID = user.userid;
-            // var hisNativePeer = user.peer;
-            // var hisIncomingStreams = user.peer.getRemoteStreams();
-            // var hisDataChannels = user.channels;
-        });
+      connection.onopen = (event) => {
+          // connection.send('hello everyone');
+          let allParticipants = connection.getAllParticipants();
+          if (allParticipants.length === 0) {
+            // retry
+          }
+          connection.send("ready");
+
+        //   connection.getAllParticipants().forEach(function(participantId) {
+        //     console.log(participantId);
+        // });
       };
       
       connection.onmessage = function(event) {
-          alert(event.userid + ' said: ' + event.data);
+          // alert(event.userid + ' said: ' + event.data);
+          if (event.data === "ready") {
+            // start sending data
+          }
       };
       
       connection.openOrJoin('your-room-id');
