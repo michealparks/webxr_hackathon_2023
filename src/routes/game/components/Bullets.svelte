@@ -61,6 +61,7 @@
 
 		inPortal.delete(body.handle)
 		bulletState.handles.set(body.handle, true)
+		bulletState.objects.set(body.handle, meshes[body.userData.index])
 
 		forward.set(0, 0, -1).applyQuaternion(quaternion).multiplyScalar(bulletSpeed)
 
@@ -125,6 +126,7 @@
 		<RigidBody
 			bind:rigidBody={bodies[index]}
 			gravityScale={0}
+			userData={{ index }}
 		>
 			<Collider
 				shape="cuboid"

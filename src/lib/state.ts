@@ -12,7 +12,8 @@ export const gameState = {
 export const bulletState = {
   index: 0,
   hideIndex: 0,
-  handles: new Map<number, boolean>()
+  handles: new Map<number, boolean>(),
+  objects: new Map<number, THREE.Object3D>(),
 }
 
 export const handGestureState = {

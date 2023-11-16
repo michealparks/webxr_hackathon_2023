@@ -12,6 +12,7 @@ Command: npx @threlte/gltf@2.0.0 target.glb
   import { hideBody } from '$lib/physics'
 	import { spring } from 'svelte/motion'
   import { bulletState, gameState } from '$lib/state'
+  import { particles } from '$lib/particles'
 
 	export const ref = new THREE.Group()
 
@@ -33,7 +34,6 @@ Command: npx @threlte/gltf@2.0.0 target.glb
   let enabled = false
   
   const handleEnter = (event) => {
-    console.log('enter')
 		const { handle } = event.targetRigidBody
 
 		const body = world.bodies.get(handle)
@@ -45,6 +45,13 @@ Command: npx @threlte/gltf@2.0.0 target.glb
 		hideBody(body)
 
     health -= 10
+
+    const bulletObject = bulletState.objects.get(handle)
+
+    if (bulletObject) {
+      bulletObject.getWorldPosition(vec3)
+      particles.triggerDamageAt(vec3)
+    }
 
     gameState.score.update(value => value + 1)
 
