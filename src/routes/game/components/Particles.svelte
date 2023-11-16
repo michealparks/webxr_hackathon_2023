@@ -1,7 +1,10 @@
 <script lang='ts'>
   import * as THREE from 'three'
-  import { T, useFrame } from '@threlte/core'
+  import { T, useFrame, useThrelte } from '@threlte/core'
   import { particles } from '$lib/particles'
+	import { onMount } from 'svelte'
+
+  const { scene } = useThrelte()
 
   const { positions, rotations, scales, angvels, linvels, count } = particles
   const size = 0.05
@@ -44,6 +47,10 @@
 
     mesh.instanceMatrix.needsUpdate = true
   })
+
+  scene.add(mesh)
+
+  onMount(() => scene.add(mesh))
 </script>
 
 <T is={mesh} />
