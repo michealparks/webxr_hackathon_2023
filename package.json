@@ -50,6 +50,7 @@
 		"npm": "^10.2.3",
 		"ratk": "^0.3.0",
 		"rtcmulticonnection": "^3.7.1",
+		"socket.io": "^4.7.2",
 		"three": "^0.158.0",
 		"vite-plugin-mkcert": "^1.16.0"
 	}

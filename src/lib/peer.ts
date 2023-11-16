@@ -1,4 +1,3 @@
-import RTCMultiConnection from 'rtcmulticonnection'
 import * as THREE from 'three'
 
 export const peer = {
@@ -19,7 +18,7 @@ export const peer = {
 }
 
 export const initPeer = () => {
-	const connection = new RTCMultiConnection()
+	const connection = new globalThis.RTCMultiConnection()
 
 	// this line is VERY_important
 	connection.socketURL = 'https://portal.epicgamer.org:9001/'
