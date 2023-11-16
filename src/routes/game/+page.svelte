@@ -16,7 +16,7 @@
 
 	createRatk()
 
-	const peer = false
+	const peer = true
 
 	if (peer) initPeer()
 </script>
@@ -32,7 +32,7 @@
 
 <HandEvents />
 
-<!-- <Enemy /> -->
+<Enemy />
 
 <Planes>
 	<Portal>

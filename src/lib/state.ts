@@ -18,3 +18,7 @@ export const bulletState = {
 export const handGestureState = {
   firing: false
 }
+
+export const networkState = {
+  sendUpdates: true
+}
