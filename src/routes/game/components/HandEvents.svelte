@@ -38,8 +38,23 @@
         })
 
         handGestureState.firing = true
+        const newState = (minPose === 'relaxed') ? true : false;
+        const isChanged = handGestureState.right.firing === newState;
+        handGestureState.right.firing = newState;
+        handGestureState.right.changedThisFrame = isChanged;
+      }
+      if (handedness === 'left') {
+        let minDistance = 10
+        let minPose = null
+        distances.forEach(([pose, distance]) => {
+          if (distance < minDistance) minPose = pose
+        })
 
         console.log(minPose)
+        const newState = (minPose === 'relaxed') ? true : false;
+        const isChanged = handGestureState.left.firing === newState;
+        handGestureState.left.firing = newState;
+        handGestureState.left.changedThisFrame = isChanged;
       }
       
       start()

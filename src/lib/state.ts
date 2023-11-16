@@ -17,5 +17,13 @@ export const bulletState = {
 }
 
 export const handGestureState = {
-  firing: false
+  firing: false,
+  left: {
+    firing: false,
+    changedThisFrame: false
+  },
+  right: {
+    firing: false,
+    changedThisFrame: false
+  }
 }
