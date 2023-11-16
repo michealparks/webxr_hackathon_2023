@@ -129,6 +129,7 @@ export const initPeer = () => {
 		if (!leftCtrl.current || !rightCtrl.current) return
 		if (!networkState.sendUpdates) return;
 
+		// @todo calculate headset position, quaternion wrt portal
 		player.headset.position.copy(headset.position)
 		player.headset.quaternion.copy(headset.quaternion)
 	

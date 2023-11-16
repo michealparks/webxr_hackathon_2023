@@ -19,16 +19,16 @@
 </script>
 
 <T.Mesh bind:ref={headset}>
-  <T.SphereGeometry args={[0.2]} />
-  <T.MeshPhongMaterial color='hotpink' />
+  <T.BoxGeometry args={[0.15, 0.1, 0.1]} />
+  <T.MeshPhongMaterial color='black' />
 </T.Mesh>
 
 <T.Mesh bind:ref={leftHand}>
-  <T.SphereGeometry args={[0.1]} />
-  <T.MeshPhongMaterial color='hotpink' />
+  <T.SphereGeometry args={[0.06]} />
+  <T.MeshPhongMaterial color='black' />
 </T.Mesh>
 
 <T.Mesh bind:ref={rightHand}>
-  <T.SphereGeometry args={[0.1]} />
-  <T.MeshPhongMaterial color='hotpink' />
+  <T.SphereGeometry args={[0.06]} />
+  <T.MeshPhongMaterial color='black' />
 </T.Mesh>
