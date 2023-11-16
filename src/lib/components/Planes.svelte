@@ -101,8 +101,8 @@
 {#each planes as plane}
 	{@const size = plane.planeMesh.geometry.boundingBox.getSize(vec3)}
 	<T is={plane} visible={false}>
-		<T.Group rotation.x={Math.PI / 2}>
-			<Collider sensor shape='cuboid' args={[size.x / 2, size.z / 2, 0.1]} on:sensorenter={handleEnter} />
+		<T.Group rotation.x={Math.PI / 2} position={[0, -0.3, 0]}>
+			<Collider sensor shape='cuboid' args={[size.x / 2, size.z / 2, 0.35]} on:sensorenter={handleEnter} />
 		</T.Group>
 	</T>
 {/each}

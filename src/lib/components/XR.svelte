@@ -14,4 +14,6 @@
 	<T.PerspectiveCamera slot="fallback" makeDefault position={[0, 0, 5]}>
 		<OrbitControls />
 	</T.PerspectiveCamera>
+
+  <slot />
 </XR>

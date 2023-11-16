@@ -9,6 +9,7 @@ import { useHeadset } from '@threlte/xr'
   const headset = useHeadset()
 
   useFixed(() => {
+    console.log(headset.position)
     rigidBody.setTranslation(headset.position, true)
   }, { fixedStep: 1 / 30 })
 </script>

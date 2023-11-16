@@ -6,6 +6,7 @@
   import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
   import { useController } from '@threlte/xr'
 	import { useFixed } from '$lib/hooks/useFixed'
+	import { inPortal } from '$lib/state'
 
   const leftPad = useGamepad({ hand: 'left', xr: true })
   const rightPad = useGamepad({ hand: 'right', xr: true })
@@ -15,13 +16,15 @@
     right: useController('right'),
   }
 
-  const numBullets = 100
+  const numBullets = 40
   const bulletSpeed = 20
   const bulletLength = 0.05
   const bulletWidth = 0.02
 
   const forward = new THREE.Vector3()
   const bodies: RapierRigidBody[] = []
+  const meshes: THREE.Mesh[] = []
+  const materials: THREE.Material[] = []
 
   let cursor = 0
 
@@ -32,6 +35,8 @@
 
     const { quaternion, position } = targetRay
     const body = bodies[cursor]!
+
+    inPortal.delete(body.handle)
 
     forward.set(0, 0, -1).applyQuaternion(quaternion).multiplyScalar(bulletSpeed)
 
@@ -68,6 +73,17 @@
 
   rightPad.trigger.on('down', handleFireStart('right'))
   rightPad.trigger.on('up', handleFireEnd('right'))
+
+  for (let i = 0; i < numBullets; i += 1) {
+    const material = new THREE.MeshBasicMaterial()
+    const geometry = new THREE.BoxGeometry(bulletWidth, bulletWidth, bulletLength)
+    materials.push(material)
+    meshes.push(new THREE.Mesh(geometry, material))
+
+    material.stencilWrite = true
+    material.stencilRef = 1
+    material.stencilFunc = THREE.EqualStencilFunc
+  }
 </script>
 
 
@@ -82,11 +98,7 @@
         shape='cuboid'
         args={[bulletWidth / 2, bulletWidth / 2, bulletLength / 2]}
       />
-      <T.Mesh>
-        <T.BoxGeometry args={[bulletWidth, bulletWidth, bulletLength]} />
-        <T.MeshBasicMaterial />
-      </T.Mesh>
+      <T is={meshes[index]} />
     </RigidBody>
   </T.Group>
-  
 {/each}
