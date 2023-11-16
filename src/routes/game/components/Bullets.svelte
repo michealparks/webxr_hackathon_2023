@@ -6,7 +6,7 @@
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
 	import { useController, useHand, useXR } from '@threlte/xr'
 	import { useFixed } from '$lib/useFixed'
-	import { inPortal, handGestureState } from '$lib/state'
+	import { inPortal, handGestureState, bulletState } from '$lib/state'
 	import PhysicsDebug from './PhysicsDebug.svelte'
 
 	let physicsDebug = false
@@ -36,8 +36,6 @@
 	const meshes: THREE.Mesh[] = []
 	const materials: THREE.Material[] = []
 
-	let cursor = 0
-
 	const frame = (handedness: 'left' | 'right') => {
 		// Handle hands
 		if (isHandTracking.current) {
@@ -56,7 +54,7 @@
 		if (!targetRay) return
 
 		const { quaternion, position } = targetRay
-		const body = bodies[cursor]!
+		const body = bodies[bulletState.index]!
 
 		inPortal.delete(body.handle)
 
@@ -67,8 +65,8 @@
 		body.setAngvel({ x: 0, y: 0, z: 0 }, false)
 		body.setLinvel({ x: forward.x, y: forward.y, z: forward.z }, true)
 
-		cursor += 1
-		cursor %= numBullets
+		bulletState.index += 1
+		bulletState.index %= numBullets
 	}
 
 	const leftFrame = useFixed(() => frame('left'), { fixedStep: 1 / 5, autostart: false })

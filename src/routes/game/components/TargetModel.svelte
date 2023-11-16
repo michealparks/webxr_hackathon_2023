@@ -7,56 +7,140 @@ Command: npx @threlte/gltf@2.0.0 target.glb
   import * as THREE from 'three'
 	import { T, forwardEventHandlers, useFrame } from '@threlte/core'
 	import { useGltf } from '@threlte/extras'
+	import { Collider, RigidBody, useRapier } from '@threlte/rapier'
+  import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
+  import { hideBody } from '$lib/physics'
+	import { spring } from 'svelte/motion'
 
 	export const ref = new THREE.Group()
 
-  let prop: THREE.Object3D
+  export let delay = 0
 
+  const { world } = useRapier()
+  const vec3 = new THREE.Vector3()
 	const gltf = useGltf('/target.glb')
-
 	const component = forwardEventHandlers()
 
-  let time = 0
-  useFrame((_, delta) => {
+  let scale = spring(0)
+
+  let time = delay
+  let rigidBody: RapierRigidBody
+  let prop: THREE.Mesh
+
+  let health = 100
+  let visible = false
+  
+  const handleEnter = (event) => {
+    console.log('enter')
+		const { handle } = event.targetRigidBody
+
+		const body = world.bodies.get(handle)
+
+		if (body === null) return
+
+		hideBody(body)
+
+    health -= 10
+
+    if (health <= 0) {
+      stop()
+      visible = false
+      setTimeout(init, 2000)
+    }
+	}
+
+  const init = () => {
+    start()
+    visible = true
+    health = 100
+    scale.set(1)
+  }
+
+  const { start, stop } = useFrame((_, delta) => {
     time += delta
-    if (!prop) return
+  
+    if (!prop || !rigidBody) return
+  
     prop.rotation.y -= 0.2
     ref.position.x = Math.sin(time) / 2
     ref.position.y = (Math.cos(time) / 2) + 0.5
     ref.position.z = THREE.MathUtils.clamp(Math.tan(time) / 8, -7, 7)
-  })
+
+    ref.getWorldPosition(vec3)
+    rigidBody.setTranslation(vec3, true)
+  }, { autostart: false })
+
+  $: if ($gltf) {
+    setTimeout(init, 2000)
+  }
 </script>
 
-<T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
+<T
+  is={ref}
+  dispose={false}
+  scale={$scale}
+  {...$$restProps}
+  bind:this={$component}
+  {visible}
+>
 	{#await gltf}
 		<slot name="fallback" />
+
 	{:then gltf}
-		<T.Mesh geometry={gltf.nodes.Target_1.geometry} material={gltf.materials['Material.001']} />
+    <T.Mesh
+      geometry={gltf.nodes.Target_1.geometry}
+      material={gltf.materials['Material.001']}
+    />
+  
+    <T.Mesh
+      geometry={gltf.nodes.Target_3.geometry}
+      material={gltf.materials['Material.002']}
+      position={[0, 0, -0.01]}
+    />
+
+    <T.Mesh
+      geometry={gltf.nodes.Target_4.geometry}
+      material={gltf.nodes.Target_4.material}
+      position={[0, 0, -0.01]}
+    />
+
 		<T.Mesh
-			geometry={gltf.nodes.Target_3.geometry}
-			material={gltf.materials['Material.002']}
-			position={[0, 0, -0.01]}
-		/>
-		<T.Mesh
-			geometry={gltf.nodes.Target_4.geometry}
-			material={gltf.nodes.Target_4.material}
-			position={[0, 0, -0.01]}
-		/>
-		<T.Mesh
-			geometry={gltf.nodes.Pole.geometry}
-			material={gltf.materials['Material.003']}
-			position={[0, 0, -0.07]}
-		/>
-		<T.Mesh geometry={gltf.nodes.Target_2.geometry} material={gltf.nodes.Target_2.material} />
-		<T.Mesh
+      geometry={gltf.nodes.Target_2.geometry}
+      material={gltf.nodes.Target_2.material}
+    />
+
+    <T.Mesh
+      geometry={gltf.nodes.Pole.geometry}
+      material={gltf.materials['Material.003']}
+      position={[0, 0, -0.07]}
+    />
+
+    <T.Mesh
       bind:ref={prop}
 			geometry={gltf.nodes.Prop.geometry}
 			material={gltf.materials['Material.003']}
 			position={[0, 0.25, -0.05]}
 		/>
+  
 	{:catch error}
 		<slot name="error" {error} />
 	{/await}
 
 	<slot {ref} />
 </T>
+
+<T.Group rotation.x={Math.PI / 2}>
+  <RigidBody
+    type='fixed'
+    enabled={visible}
+    bind:rigidBody
+    on:sensorenter={handleEnter}
+  >
+    <Collider
+      sensor
+      shape='cylinder'
+      args={[0.05, 0.16]}
+    />
+  </RigidBody>
+</T.Group>
+

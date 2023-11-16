@@ -1,9 +1,12 @@
 <script lang='ts'>
+  import { T } from '@threlte/core'
   import { useGltf } from '@threlte/extras'
   import TargetModel from './TargetModel.svelte'
   const gltf = useGltf('target.glb')
 
-  $: console.log($gltf)
+  export let delay = 0
 </script>
 
-<TargetModel />
+<T.Group {...$$restProps}>
+  <TargetModel {delay} />
+</T.Group>

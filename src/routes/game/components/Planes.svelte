@@ -6,7 +6,7 @@
 	import { useRatk } from '$lib/ratk'
 	import { useRapier } from '@threlte/rapier'
 	import { hideBody } from '$lib/physics'
-	import { inPortal } from '$lib/state'
+	import { inPortal, bulletState } from '$lib/state'
 
 	const { world } = useRapier()
 
@@ -69,8 +69,6 @@
 		enabled = true
 	}
 
-	let cursor = 0
-
 	const handleEnter = (event) => {
 		const { handle } = event.targetRigidBody
 
@@ -80,10 +78,9 @@
 
 		if (body === null) return
 
-		hideBody(body, cursor)
+		hideBody(body)
 
-		cursor += 1
-		cursor %= 100
+
 	}
 </script>
 
@@ -100,7 +97,7 @@
 {#each planes as plane}
 	{@const size = plane.planeMesh?.geometry.boundingBox?.getSize(vec3) ?? { x: 0, z: 0 }}
 	<T is={plane} visible={false}>
-		<T.Group rotation.x={Math.PI / 2} position={[0, -0.3, 0]}>
+		<T.Group rotation.x={Math.PI / 2} position={[0, -0.1, 0]}>
 			<Collider
 				sensor
 				shape="cuboid"

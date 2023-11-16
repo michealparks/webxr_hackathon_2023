@@ -35,7 +35,7 @@
 			<T.MeshBasicMaterial color="#a99756" />
 		</T.Mesh>
 
-		<Button
+		<!-- <Button
 			positionX={0}
 			positionY={0}
 			positionZ={0.05}
@@ -44,7 +44,7 @@
 			depth={0.01}
 			text="Show tutorial"
 			on:click={() => goto('/tutorial')}
-		/>
+		/> -->
 
 		<Button
 			positionX={0}
@@ -54,7 +54,7 @@
 			height={0.3}
 			depth={0.01}
 			text="Start playing"
-			on:click={() => goto('/setup')}
+			on:click={() => goto('/game')}
 		/>
 	</Flex>
 </T.Group>
