@@ -40,9 +40,12 @@ import * as THREE from 'three';
             dumpHands as handyDumpHands} from 'https://cdn.jsdelivr.net/npm/handy-work@1.4.0/build/esm/handy-work.standalone.js'
 
             console.log(handyUpdate);
+			// switched fist and relax upstream
+            handyLoadPose('relax', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/fist.handpose');
+            handyLoadPose('fist', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/relax.handpose');
+            // handyLoadPose('point', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/point.handpose');
 
-            handyLoadPose('fist', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/fist.handpose');
-            handyLoadPose('point', 'https://raw.githubusercontent.com/AdaRoseCannon/handy-work/main/poses/point.handpose');
+			// handyLoadPose('shootStart', 'http://localhost:8080/handgestures/shootStart2.handpose');
 
             // // loadPose('relax', POSE_FOLDER + 'relax.handpose');
             // // loadPose('fist', './fist.handpose');
@@ -128,7 +131,17 @@ import * as THREE from 'three';
 				scene.add( controllerGrip1 );
 
 				hand1 = renderer.xr.getHand( 0 );
-				hand1.add( handModelFactory.createHandModel( hand1 ) );
+				hand1.add( handModelFactory.createHandModel( hand1, "mesh" ) );
+
+				// hand1.addEventListener( 'pinchend', function (data) {
+
+				// 	console.log(data.handedness);
+				// 	setTimeout(() => {
+				// 		console.log("dumping hands");
+				// 		handyDumpHands();
+				// 	}, 3000);
+				// } );
+
 
 				scene.add( hand1 );
 
@@ -138,8 +151,21 @@ import * as THREE from 'three';
 				scene.add( controllerGrip2 );
 
 				hand2 = renderer.xr.getHand( 1 );
-				hand2.add( handModelFactory.createHandModel( hand2 ) );
+				hand2.add( handModelFactory.createHandModel( hand2, "mesh" ) );
 				scene.add( hand2 );
+
+				// hand2.addEventListener( 'pinchend', function (data) {
+
+				// 	console.log(data.handedness);
+				// 	setTimeout(() => {
+				// 		console.log("dumping hands");
+				// 		handyDumpHands();
+				// 	}, 3000);
+				// 	// if (data.handedness === "left") {
+				// 	// 	handyDumpHands(); // turns on flag so that update handles it in next frame
+				// 	// }
+
+				// } );
 
 				//
 
@@ -193,15 +219,47 @@ import * as THREE from 'three';
                     //         ]
                     //     ]
                     // }
-                    handyUpdate(session.inputSources, referenceSpace, frame, ({handedness, distances}) => {
-                        // do something with poses and distances Array of array
-                        // threshold for checking if making this pose in this frame, 0.8?
-                        if (handedness === "right") {
-                            distances.forEach(([pose, distance]) => {
-                                if (pose === "fist") console.log(pose);
-                            });
-                        }
-                    })
+					
+					// session.inputSources -> find the left and right input sources and only pass the correct input source? so that only one hand gesture gets saved to file?
+
+					// MENTIONED in the readme, requires both hands
+
+					// let rightInputSource = null;
+					// session.inputSources.forEach(inputSource => {
+					// 	if (inputSource.handedness === "right") rightInputSource = inputSource;
+					// });
+					// // console.log(rightInputSource);
+					// if (rightInputSource !== null) {
+					// 	handyUpdate([rightInputSource], referenceSpace, frame, ({handedness, distances}) => {
+					// 		console.log("in update");
+					// 		console.log(distances);
+					// 		// // do something with poses and distances Array of array
+					// 		// // threshold for checking if making this pose in this frame, 0.8?
+					// 		// if (handedness === "right") {
+					// 		// 	distances.forEach(([pose, distance]) => {
+					// 		// 		if (pose === "fist") console.log(pose);
+					// 		// 	});
+					// 		// }
+					// 	})
+					// }
+					handyUpdate(session.inputSources, referenceSpace, frame, ({handedness, distances}) => {
+						// console.log("in update");
+						// console.log(handedness);
+						// console.log(distances);
+						// // do something with poses and distances Array of array
+						// // threshold for checking if making this pose in this frame, 0.8?
+						if (handedness === "right") {
+							let minDistance = 10;
+							let minPose = null;
+							distances.forEach(([pose, distance]) => {
+								// if (pose === "shootStart" && distance < 0.05) console.log(distance);
+								// if (pose === "point") console.log(distance);
+								// if (pose === "fist") console.log(distance);
+								if (distance < minDistance) minPose = pose;
+							});
+							console.log(minPose);
+						}
+					})
                 }
 
 				renderer.render( scene, camera );
