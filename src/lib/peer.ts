@@ -1,3 +1,4 @@
+// import {io} from 'socket.io'
 import RTCMultiConnection from 'rtcmulticonnection'
 import * as THREE from 'three'
 
@@ -31,30 +32,36 @@ export const initPeer = () => {
 		data: true
 	}
 
-	connection.onopen = (event) => {
-		// connection.send('hello everyone');
-		const allParticipants = connection.getAllParticipants()
-		if (allParticipants.length === 0) {
-			// retry
-		}
-		connection.send('ready')
-
-		//   connection.getAllParticipants().forEach(function(participantId) {
-		//     console.log(participantId);
-		// });
-	}
-
+	
 	connection.onmessage = function (event) {
 		const { message, array } = event.data
 
 		switch (message) {
 			case 'update': {
-				peer.headset.position.x = array[0]
-				peer.headset.position.y = array[1]
+				let offset = 0;
+
+				peer.headset.position.set(array[offset], array[offset + 1], array[offset + 2])
+				offset += 3
+				peer.headset.quaternion.set(array[offset], array[offset + 1], array[offset + 2], array[offset + 3])
+				offset += 4
+
+				peer.controllers.left.position.set(array[offset], array[offset + 1], array[offset + 2])
+				offset += 3
+				peer.controllers.left.quaternion.set(array[offset], array[offset + 1], array[offset + 2], array[offset + 3])
+				offset += 4
+
+				peer.controllers.right.position.set(array[offset], array[offset + 1], array[offset + 2])
+				offset += 3
+				peer.controllers.right.quaternion.set(array[offset], array[offset + 1], array[offset + 2], array[offset + 3])
+				offset += 4
+
 				break
 			}
 			case 'ready': {
 				// @todo
+				// start sending updates  each frame, need way to connect to the update function, useFrame??
+				const dummyUpdate = new Float32Array(21).fill(2);
+				connection.send({ 'update': String, dummyUpdate })
 				break
 			}
 			case 'fire-weapon': {
@@ -64,5 +71,18 @@ export const initPeer = () => {
 		}
 	}
 
-	connection.openOrJoin('your-room-id')
+	connection.openOrJoin('your-room-id', () => {
+		console.log("here");
+		// connection.send('hello everyone');
+		const allParticipants = connection.getAllParticipants()
+		if (allParticipants.length === 0) {
+			// retry
+			console.log("No Players found");
+			return;
+		}
+		connection.send('ready')
+	})
+	// connection.onopen = (event) => {
+		
+	// }
 }
