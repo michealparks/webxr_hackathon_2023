@@ -2,6 +2,7 @@
 	import { initPeer } from '$lib/peer'
 	import { createRatk } from '$lib/ratk'
 	import { Audio } from '@threlte/extras'
+	import { gameState } from '$lib/state'
 	import Planes from './components/Planes.svelte'
 	import Portal from './components/Portal.svelte'
 	import PortalScene from './components/PortalScene.svelte'
@@ -10,6 +11,8 @@
 	import HandEvents from './components/HandEvents.svelte'
 	import Enemy from './components/Enemy.svelte'
 	import Target from './components/Target.svelte'
+
+	gameState.reset()
 
 	createRatk()
 
@@ -29,7 +32,7 @@
 
 <HandEvents />
 
-<Enemy />
+<!-- <Enemy /> -->
 
 <Planes>
 	<Portal>

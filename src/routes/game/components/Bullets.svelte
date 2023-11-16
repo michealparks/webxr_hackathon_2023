@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as THREE from 'three'
 	import { T } from '@threlte/core'
-	import { useGamepad } from '@threlte/extras'
+	import { useGamepad, PositionalAudio } from '@threlte/extras'
 	import { RigidBody, Collider } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
 	import { useController, useHand, useXR } from '@threlte/xr'
@@ -10,6 +10,9 @@
 	import PhysicsDebug from './PhysicsDebug.svelte'
 
 	let physicsDebug = false
+
+	let audioPlay: () => void
+	let audioStop: () => void
 
 	const leftPad = useGamepad({ hand: 'left', xr: true })
 	const rightPad = useGamepad({ hand: 'right', xr: true })
@@ -57,6 +60,7 @@
 		const body = bodies[bulletState.index]!
 
 		inPortal.delete(body.handle)
+		bulletState.handles.set(body.handle, true)
 
 		forward.set(0, 0, -1).applyQuaternion(quaternion).multiplyScalar(bulletSpeed)
 
@@ -67,6 +71,9 @@
 
 		bulletState.index += 1
 		bulletState.index %= numBullets
+
+		audioStop()
+		audioPlay()
 	}
 
 	const leftFrame = useFixed(() => frame('left'), { fixedStep: 1 / 5, autostart: false })
@@ -115,8 +122,14 @@
 
 {#each { length: numBullets } as _, index (index)}
 	<T.Group position={[index + 9999, 0, 0]}>
-		<RigidBody bind:rigidBody={bodies[index]} gravityScale={0}>
-			<Collider shape="cuboid" args={[bulletWidth / 2, bulletWidth / 2, bulletLength / 2]} />
+		<RigidBody
+			bind:rigidBody={bodies[index]}
+			gravityScale={0}
+		>
+			<Collider
+				shape="cuboid"
+				args={[bulletWidth / 2, bulletWidth / 2, bulletLength / 2]}
+			/>
 			<T is={meshes[index]} />
 		</RigidBody>
 	</T.Group>
@@ -125,3 +138,11 @@
 {#if physicsDebug}
 	<PhysicsDebug />
 {/if}
+
+<PositionalAudio
+	bind:play={audioPlay}
+	bind:stop={audioStop}
+	refDistance={1}
+	volume={0.2}
+	src={'/audio/fire.wav'}
+/>

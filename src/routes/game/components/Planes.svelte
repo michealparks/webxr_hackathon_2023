@@ -61,11 +61,7 @@
 		}
 
 		group.position.set(wall.position.x, 0, wall.position.z)
-		wall.getWorldDirection(vec3)
-		group.lookAt(vec3)
-		group.rotation.x = 0
-		group.rotation.z = 0
-
+		group.lookAt(0, 0, 0)
 		enabled = true
 	}
 
@@ -79,8 +75,6 @@
 		if (body === null) return
 
 		hideBody(body)
-
-
 	}
 </script>
 
