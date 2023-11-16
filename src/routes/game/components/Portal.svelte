@@ -8,6 +8,7 @@
 	} from '@dimforge/rapier3d-compat'
 	import { useFixed } from '$lib/useFixed'
 	import { inPortal } from '$lib/state'
+	import Score from './Score.svelte'
 
 	const { world } = useRapier()
 
@@ -21,11 +22,12 @@
 	material.stencilFunc = THREE.AlwaysStencilFunc
 	material.stencilZPass = THREE.ReplaceStencilOp
 
-	injectPlugin('portal', ({ ref }) => {
+	injectPlugin('portal', ({ ref, props }) => {
 		let currentRef = ref
 
 		if (ref.isMesh === false) return
 		if (ref.uuid === portal.uuid) return
+		if (props.userData?.portal === false) return
 
 		const setStencilProps = (mesh: THREE.Mesh) => {
 			const { material } = mesh
@@ -73,11 +75,11 @@
 </script>
 
 <T.Group>
-	<T.ArrowHelper />
-
 	<T is={portal} position.y={radius + offsetY}>
 		<T is={material} />
 		<T.CircleGeometry args={[radius, 64]} />
+
+		<Score />
 	</T>
 
 	<T.Group position={[0, 0, -1]}>

@@ -11,7 +11,7 @@ Command: npx @threlte/gltf@2.0.0 target.glb
   import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
   import { hideBody } from '$lib/physics'
 	import { spring } from 'svelte/motion'
-  import { bulletState } from '$lib/state'
+  import { bulletState, gameState } from '$lib/state'
 
 	export const ref = new THREE.Group()
 
@@ -45,6 +45,8 @@ Command: npx @threlte/gltf@2.0.0 target.glb
 		hideBody(body)
 
     health -= 10
+
+    gameState.score.update(value => value + 1)
 
     if (health <= 0) {
       stop()
