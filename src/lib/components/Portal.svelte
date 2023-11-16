@@ -1,9 +1,17 @@
 <script lang="ts">
 	import * as THREE from 'three'
 	import { T, injectPlugin } from '@threlte/core'
+	import { Collider, RigidBody, useRapier } from '@threlte/rapier'
+  import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
+	import { useFixed } from '$lib/hooks/useFixed'
+	import { inPortal } from '$lib/state'
 
-	let portal = new THREE.Mesh()
-	let material = new THREE.MeshPhongMaterial()
+  const { world } = useRapier()
+
+  let rigidBody: RapierRigidBody
+
+	const portal = new THREE.Mesh()
+	const material = new THREE.MeshPhongMaterial()
 	material.depthWrite = false
 	material.stencilWrite = true
 	material.stencilRef = 1
@@ -41,6 +49,18 @@
 
   const radius = 0.7
   const offsetY = 0.2
+
+  const handlePortalEnter = (event) => {
+    inPortal.set(event.targetRigidBody.handle, true)
+  }
+
+  const worldPosition = new THREE.Vector3()
+  const worldQuaternion = new THREE.Quaternion()
+
+  useFixed(() => {
+    rigidBody.setTranslation(portal.getWorldPosition(worldPosition), true)
+    rigidBody.setRotation(portal.getWorldQuaternion(worldQuaternion), true)
+  }, { fixedStep: 1 / 5 })
 </script>
 
 <T.Group>
@@ -58,3 +78,13 @@
   </T.Group>
 </T.Group>
 
+<RigidBody bind:rigidBody type='fixed'>
+  <T.Group rotation.x={Math.PI / 2}>
+    <Collider
+      shape='cylinder'
+      args={[0.2, radius]}
+      sensor
+      on:sensorenter={handlePortalEnter}
+    />
+  </T.Group>
+</RigidBody>

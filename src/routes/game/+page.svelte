@@ -5,7 +5,7 @@
 	import Portal from '$lib/components/Portal.svelte'
   import PortalScene from '$lib/components/PortalScene.svelte'
 	import Bullets from '$lib/components/Bullets.svelte';
-	import StaticBodies from '$lib/components/StaticBodies.svelte';
+	import PhysicsDebug from '$lib/components/PhysicsDebug.svelte'
 
   createRatk()
 
@@ -19,10 +19,9 @@
     </Portal>  
   </Planes>
 
-  <StaticBodies />
   <Bullets />
   
   {#if debug}
-    <Debug />
+    <PhysicsDebug />
   {/if}
 </World>

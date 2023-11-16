@@ -1,9 +1,9 @@
 <script lang='ts'>
   import * as THREE from 'three'
   import { T } from '@threlte/core'
-  import { useGamepad, InstancedMesh, Instance } from '@threlte/extras'
+  import { useGamepad } from '@threlte/extras'
   import { RigidBody, Collider } from '@threlte/rapier'
-  import { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
+  import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
   import { useController } from '@threlte/xr'
 	import { useFixed } from '$lib/hooks/useFixed'
 
@@ -15,26 +15,31 @@
     right: useController('right'),
   }
 
-  let cursor = 0
-
-  const bulletSpeed = 8
+  const numBullets = 100
+  const bulletSpeed = 20
+  const bulletLength = 0.05
+  const bulletWidth = 0.02
 
   const forward = new THREE.Vector3()
+  const bodies: RapierRigidBody[] = []
+
+  let cursor = 0
 
   const frame = (hand: 'left' | 'right') => {
     const targetRay = controllers[hand].current?.targetRay
 
     if (!targetRay) return
 
+    const { quaternion, position } = targetRay
     const body = bodies[cursor]!
 
-    forward.set(0, 0, -1).applyQuaternion(targetRay.quaternion).multiplyScalar(bulletSpeed)
+    forward.set(0, 0, -1).applyQuaternion(quaternion).multiplyScalar(bulletSpeed)
 
-    body.setRotation({ x: targetRay.quaternion.x, y: targetRay.quaternion.y, z: targetRay.quaternion.z, w: targetRay.quaternion.w }, false)
-    body.setTranslation({ x: targetRay.position.x, y: targetRay.position.y, z: targetRay.position.z }, false)
+    body.setRotation({ x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }, false)
+    body.setTranslation({ x: position.x, y: position.y, z: position.z }, false)
     body.setAngvel({ x: 0, y: 0, z: 0 }, false)
     body.setLinvel({ x: forward.x, y: forward.y, z: forward.z }, true)
-    
+  
     cursor += 1
     cursor %= numBullets
   }
@@ -63,29 +68,25 @@
 
   rightPad.trigger.on('down', handleFireStart('right'))
   rightPad.trigger.on('up', handleFireEnd('right'))
-
-  const bodies: RapierRigidBody[] = []
-
-  let bullets: THREE.Vector3[] = []
-  let numBullets = 300
-  const bulletLength = 0.05
-  const bulletWidth = 0.02
-
-  for (let i = 0; i < numBullets; i += 1) {
-    bullets.push(new THREE.Vector3(0, 1, 0))
-  }
 </script>
 
-<InstancedMesh limit={numBullets}>
-  <T.BoxGeometry args={[bulletWidth, bulletWidth, bulletLength]} />
-  <T.MeshBasicMaterial />
-  {#each { length: numBullets } as _, index (index)}
-    <RigidBody bind:rigidBody={bodies[index]} gravityScale={0}>
+
+{#each { length: numBullets } as _, index (index)}
+  <T.Group position={[index + 9999, 0, 0]} >
+    <RigidBody
+      bind:rigidBody={bodies[index]}
+      gravityScale={0}
+      
+    >
       <Collider
         shape='cuboid'
         args={[bulletWidth / 2, bulletWidth / 2, bulletLength / 2]}
       />
-      <Instance />
+      <T.Mesh>
+        <T.BoxGeometry args={[bulletWidth, bulletWidth, bulletLength]} />
+        <T.MeshBasicMaterial />
+      </T.Mesh>
     </RigidBody>
-  {/each}
-</InstancedMesh>
+  </T.Group>
+  
+{/each}

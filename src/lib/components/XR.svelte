@@ -4,7 +4,7 @@
   import { XR, Controller, Hand } from '@threlte/xr'
 </script>
 
-<XR>
+<XR frameRate={72}>
 	<Controller left />
 	<Controller right />
 
