@@ -6,7 +6,7 @@
 		RigidBody as RapierRigidBody,
 		Collider as RapierCollider
 	} from '@dimforge/rapier3d-compat'
-	import { useFixed } from './hooks/useFixed'
+	import { useFixed } from '$lib/useFixed'
 	import { inPortal } from '$lib/state'
 
 	const { world } = useRapier()

@@ -5,7 +5,7 @@
 	import { RigidBody, Collider } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
 	import { useController, useHand, useXR } from '@threlte/xr'
-	import { useFixed } from './hooks/useFixed'
+	import { useFixed } from '$lib/useFixed'
 	import { inPortal, handGestureState } from '$lib/state'
 
 	const leftPad = useGamepad({ hand: 'left', xr: true })
@@ -35,10 +35,10 @@
 
 	let cursor = 0
 
-	const frame = (hand: 'left' | 'right') => {
+	const frame = (handedness: 'left' | 'right') => {
 		// Handle hands
 		if (isHandTracking.current) {
-			const hand = hands[hand].current
+			const hand = hands[handedness].current
 			
 			if (handGestureState.firing) {
 				
@@ -48,7 +48,7 @@
 		}
 
 		// If not hand tracking, handle controllers
-		const targetRay = controllers[hand].current?.targetRay
+		const targetRay = controllers[handedness].current?.targetRay
 
 		if (!targetRay) return
 
@@ -87,10 +87,14 @@
 		}
 	}
 
+	// @ts-expect-error
 	leftPad.trigger.on('down', handleFireStart('left'))
+	// @ts-expect-error
 	leftPad.trigger.on('up', handleFireEnd('left'))
 
+	// @ts-expect-error
 	rightPad.trigger.on('down', handleFireStart('right'))
+	// @ts-expect-error
 	rightPad.trigger.on('up', handleFireEnd('right'))
 
 	for (let i = 0; i < numBullets; i += 1) {

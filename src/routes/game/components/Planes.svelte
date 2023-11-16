@@ -1,10 +1,11 @@
 <script lang="ts">
 	import * as THREE from 'three'
+	import type { Plane } from 'ratk'
 	import { T } from '@threlte/core'
 	import { Collider } from '@threlte/rapier'
 	import { useRatk } from '$lib/ratk'
 	import { useRapier } from '@threlte/rapier'
-	import { hideBody } from './physics'
+	import { hideBody } from '$lib/physics'
 	import { inPortal } from '$lib/state'
 
 	const { world } = useRapier()
@@ -13,8 +14,8 @@
 	const group = new THREE.Group()
 
 	let enabled = false
-	let planes: THREE.Object3D[] = []
-	let walls: THREE.Mesh[] = []
+	let planes: Plane[] = []
+	let walls: Plane[] = []
 
 	const vec3 = new THREE.Vector3()
 
@@ -29,25 +30,23 @@
 			plane.planeMesh.geometry.computeBoundingBox()
 		}
 
-		if (plane._xrPlane.orientation !== 'vertical') {
+		// @ts-expect-error
+		const xrPlane = plane._xrPlane
+
+		if (xrPlane.orientation !== 'vertical') {
 			return
 		}
 
 		walls.splice(0, walls.length)
 
 		for (const plane of ratk.planes) {
-			if (plane._xrPlane.orientation !== 'vertical') {
+			if (xrPlane.orientation !== 'vertical') {
 				continue
 			}
 
 			if (plane.planeMesh === undefined) {
 				continue
 			}
-
-			// plane.planeMesh.material = new THREE.MeshBasicMaterial({
-			// 	color: 'red',
-			// 	wireframe: true,
-			// })
 
 			walls.push(plane)
 		}
@@ -74,6 +73,7 @@
 
 	const handleEnter = (event) => {
 		const { handle } = event.targetRigidBody
+
 		if (inPortal.has(handle)) return
 
 		const body = world.bodies.get(event.targetRigidBody.handle)
@@ -98,7 +98,7 @@
 {/if}
 
 {#each planes as plane}
-	{@const size = plane.planeMesh.geometry.boundingBox.getSize(vec3)}
+	{@const size = plane.planeMesh?.geometry.boundingBox?.getSize(vec3) ?? { x: 0, z: 0 }}
 	<T is={plane} visible={false}>
 		<T.Group rotation.x={Math.PI / 2} position={[0, -0.3, 0]}>
 			<Collider

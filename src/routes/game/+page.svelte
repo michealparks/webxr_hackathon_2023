@@ -2,13 +2,14 @@
 	import { onMount } from 'svelte'
 	import { initPeer } from '$lib/peer'
 	import { createRatk } from '$lib/ratk'
-	import Planes from './Planes.svelte'
-	import Portal from './Portal.svelte'
-	import PortalScene from './PortalScene.svelte'
-	import Bullets from './Bullets.svelte'
-	import PhysicsDebug from './PhysicsDebug.svelte'
-	import Headset from './Headset.svelte'
-	import HandEvents from './HandEvents.svelte'
+	import Planes from './components/Planes.svelte'
+	import Portal from './components/Portal.svelte'
+	import PortalScene from './components/PortalScene.svelte'
+	import Bullets from './components/Bullets.svelte'
+	import PhysicsDebug from './components/PhysicsDebug.svelte'
+	import Headset from './components/Headset.svelte'
+	import HandEvents from './components/HandEvents.svelte'
+	import Enemy from './components/Enemy.svelte'
 
 	createRatk()
 
@@ -21,6 +22,8 @@
 
 <Headset />
 <HandEvents />
+
+<Enemy />
 
 <Planes>
 	<Portal>

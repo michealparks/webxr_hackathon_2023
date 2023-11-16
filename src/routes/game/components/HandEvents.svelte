@@ -25,6 +25,7 @@
     const referenceSpace = ctx.renderer.xr.getReferenceSpace()
 
     stop()
+
     handyUpdate(session.inputSources, referenceSpace, frame, ({ handedness, distances }) => {
       if (handedness === 'right') {
         let minDistance = 10
