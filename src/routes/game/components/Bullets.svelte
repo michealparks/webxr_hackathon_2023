@@ -37,18 +37,8 @@
 
 	const frame = (handedness: 'left' | 'right') => {
 		// Handle hands
-		if (isHandTracking.current) {
-			const hand = hands[handedness].current
-			
-			if (handGestureState.firing) {
-				
-			}
-
-			return
-		}
-
 		// If not hand tracking, handle controllers
-		const targetRay = controllers[handedness].current?.targetRay
+		const targetRay = isHandTracking.current ? hands[handedness].current?.get("wrist") : controllers[handedness].current?.targetRay
 
 		if (!targetRay) return
 
@@ -96,6 +86,22 @@
 	rightPad.trigger.on('down', handleFireStart('right'))
 	// @ts-expect-error
 	rightPad.trigger.on('up', handleFireEnd('right'))
+
+	if (handGestureState.left.changedThisFrame) {
+		if (handGestureState.left.firing) {
+			handleFireStart('left')
+		} else {
+			handleFireEnd('left')
+		}
+	}
+
+	if (handGestureState.right.changedThisFrame) {
+		if (handGestureState.right.firing) {
+			handleFireStart('right')
+		} else {
+			handleFireEnd('right')
+		}
+	}
 
 	for (let i = 0; i < numBullets; i += 1) {
 		const material = new THREE.MeshBasicMaterial()
