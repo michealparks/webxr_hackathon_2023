@@ -1,10 +1,10 @@
 <script lang="ts">
 	import * as THREE from 'three'
-	import { T } from '@threlte/core'
+	import { T, useFrame } from '@threlte/core'
 	import { useGamepad, PositionalAudio } from '@threlte/extras'
 	import { RigidBody, Collider } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
-	import { useController, useHand, useXR } from '@threlte/xr'
+	import { useController, useHand, useXR, handJoints, useHandJoint } from '@threlte/xr'
 	import { useFixed } from '$lib/useFixed'
 	import { inPortal, handGestureState, bulletState } from '$lib/state'
 	import PhysicsDebug from './PhysicsDebug.svelte'
@@ -39,22 +39,31 @@
 	const meshes: THREE.Mesh[] = []
 	const materials: THREE.Material[] = []
 
-	const frame = (handedness: 'left' | 'right') => {
-		// Handle hands
-		if (isHandTracking.current) {
-			const hand = hands[handedness].current
-			
-			if (handGestureState.firing) {
-				
-			}
+	const wristJoints = {
+		left: useHandJoint('left', 'wrist'),
+		right: useHandJoint('right', 'wrist')
+	}
 
-			return
-		}
+	const frame = (handedness: 'left' | 'right') => {
+		// // Handle hands
+		// if (isHandTracking.current) {
+		// 	const hand = hands[handedness].current
+			
+		// 	if (handGestureState.firing) {
+				
+		// 	}
+
+		// 	return
+		// }
 
 		// If not hand tracking, handle controllers
-		const targetRay = controllers[handedness].current?.targetRay
+		// const targetRay = controllers[handedness].current?.targetRay
+		const targetRay = isHandTracking.current ? wristJoints[handedness].current : controllers[handedness].current?.targetRay
 
-		if (!targetRay) return
+		if (!targetRay) {
+			console.log("ERRRROORRRR\n\n\n\n\n")
+			return
+		}
 
 		const { quaternion, position } = targetRay
 		const body = bodies[bulletState.index]!
@@ -108,6 +117,26 @@
 	rightPad.trigger.on('down', handleFireStart('right'))
 	// @ts-expect-error
 	rightPad.trigger.on('up', handleFireEnd('right'))
+
+	useFrame(() => {
+		if (handGestureState.left.changedThisFrame) {
+		if (handGestureState.left.firing) {
+			handleFireStart('left')
+		} else {
+			handleFireEnd('left')
+		}
+	}
+
+	if (handGestureState.right.changedThisFrame) {
+		if (handGestureState.right.firing) {
+			handleFireStart('right')
+		} else {
+			handleFireEnd('right')
+		}
+	}
+	})
+
+
 
 	for (let i = 0; i < numBullets; i += 1) {
 		const material = new THREE.MeshBasicMaterial()

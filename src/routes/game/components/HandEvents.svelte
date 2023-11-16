@@ -24,24 +24,26 @@
     const frame = ctx.renderer.xr.getFrame()
     const referenceSpace = ctx.renderer.xr.getReferenceSpace()
 
-    stop()
+    // stop()
 
     handyUpdate(session.inputSources, referenceSpace, frame, ({ handedness, distances }) => {
+      // console.log("here");
       if (handedness === 'right') {
         let minDistance = 10
         let minPose = null
         distances.forEach(([pose, distance]) => {
-          // if (pose === "shootStart" && distance < 0.05) console.log(distance);
-          // if (pose === "point") console.log(distance);
-          // if (pose === "fist") console.log(distance);
           if (distance < minDistance) minPose = pose
         })
-
-        handGestureState.firing = true
+        // console.log("right");
+        // console.log(minPose);
         const newState = (minPose === 'relaxed') ? true : false;
-        const isChanged = handGestureState.right.firing === newState;
+        const isChanged = handGestureState.right.firing !== newState;
         handGestureState.right.firing = newState;
         handGestureState.right.changedThisFrame = isChanged;
+        console.log(minPose);
+        if (isChanged) {
+          console.log("changed");
+        }
       }
       if (handedness === 'left') {
         let minDistance = 10
@@ -49,15 +51,15 @@
         distances.forEach(([pose, distance]) => {
           if (distance < minDistance) minPose = pose
         })
-
-        console.log(minPose)
+        // console.log("left");
+        // console.log(minPose);
         const newState = (minPose === 'relaxed') ? true : false;
-        const isChanged = handGestureState.left.firing === newState;
+        const isChanged = handGestureState.left.firing !== newState;
         handGestureState.left.firing = newState;
         handGestureState.left.changedThisFrame = isChanged;
       }
       
-      start()
+      // start()
     })
   })
 </script>
