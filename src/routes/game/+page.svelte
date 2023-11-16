@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { initPeer } from '$lib/peer'
 	import { createRatk } from '$lib/ratk'
+	import { Audio } from '@threlte/extras'
 	import Planes from './components/Planes.svelte'
 	import Portal from './components/Portal.svelte'
 	import PortalScene from './components/PortalScene.svelte'
@@ -14,13 +14,15 @@
 
 	createRatk()
 
-	const debug = true
+	const debug = false
 	const peer = true
 
 	if (peer) initPeer()
 </script>
 
 <Headset />
+
+<Audio src='audio/game.mp3' />
 
 <HandEvents />
 

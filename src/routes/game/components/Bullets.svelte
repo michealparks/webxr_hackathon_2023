@@ -7,6 +7,9 @@
 	import { useController, useHand, useXR } from '@threlte/xr'
 	import { useFixed } from '$lib/useFixed'
 	import { inPortal, handGestureState } from '$lib/state'
+	import PhysicsDebug from './PhysicsDebug.svelte'
+
+	let physicsDebug = false
 
 	const leftPad = useGamepad({ hand: 'left', xr: true })
 	const rightPad = useGamepad({ hand: 'right', xr: true })
@@ -24,7 +27,7 @@
 	}
 
 	const numBullets = 40
-	const bulletSpeed = 20
+	const bulletSpeed = 10
 	const bulletLength = 0.05
 	const bulletWidth = 0.02
 
@@ -92,6 +95,9 @@
 	// @ts-expect-error
 	leftPad.trigger.on('up', handleFireEnd('left'))
 
+	leftPad.clusterBottom.on('press', () => (physicsDebug = !physicsDebug))
+	rightPad.clusterBottom.on('press', () => (physicsDebug = !physicsDebug))
+
 	// @ts-expect-error
 	rightPad.trigger.on('down', handleFireStart('right'))
 	// @ts-expect-error
@@ -103,9 +109,9 @@
 		materials.push(material)
 		meshes.push(new THREE.Mesh(geometry, material))
 
-		material.stencilWrite = true
-		material.stencilRef = 1
-		material.stencilFunc = THREE.EqualStencilFunc
+		// material.stencilWrite = true
+		// material.stencilRef = 1
+		// material.stencilFunc = THREE.EqualStencilFunc
 	}
 </script>
 
@@ -117,3 +123,7 @@
 		</RigidBody>
 	</T.Group>
 {/each}
+
+{#if physicsDebug}
+	<PhysicsDebug />
+{/if}
