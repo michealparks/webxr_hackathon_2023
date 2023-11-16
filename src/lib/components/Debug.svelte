@@ -1,12 +1,12 @@
-<script lang='ts'>
-  import { T } from '@threlte/core'
-  import { Grid } from '@threlte/extras'
+<script lang="ts">
+	import { T } from '@threlte/core'
+	import { Grid } from '@threlte/extras'
 
-  let debug = true
+	let debug = true
 </script>
 
 {#if debug}
-  <Grid />
+	<Grid />
 
-  <T.AxesHelper />
+	<T.AxesHelper />
 {/if}

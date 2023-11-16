@@ -20,7 +20,7 @@
 
 	ratk.onPlaneAdded = (plane) => {
 		planes = [...ratk.planes]
-	
+
 		for (const plane of ratk.planes) {
 			if (plane.planeMesh === undefined) {
 				continue
@@ -39,7 +39,7 @@
 			if (plane._xrPlane.orientation !== 'vertical') {
 				continue
 			}
-	
+
 			if (plane.planeMesh === undefined) {
 				continue
 			}
@@ -85,7 +85,6 @@
 		cursor += 1
 		cursor %= 100
 	}
-
 </script>
 
 {#each walls as wall}
@@ -102,7 +101,12 @@
 	{@const size = plane.planeMesh.geometry.boundingBox.getSize(vec3)}
 	<T is={plane} visible={false}>
 		<T.Group rotation.x={Math.PI / 2} position={[0, -0.3, 0]}>
-			<Collider sensor shape='cuboid' args={[size.x / 2, size.z / 2, 0.35]} on:sensorenter={handleEnter} />
+			<Collider
+				sensor
+				shape="cuboid"
+				args={[size.x / 2, size.z / 2, 0.35]}
+				on:sensorenter={handleEnter}
+			/>
 		</T.Group>
 	</T>
 {/each}

@@ -2,13 +2,13 @@
 	import * as THREE from 'three'
 	import { T, injectPlugin } from '@threlte/core'
 	import { Collider, RigidBody, useRapier } from '@threlte/rapier'
-  import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
+	import type { RigidBody as RapierRigidBody, Collider as RapierCollider } from '@dimforge/rapier3d-compat'
 	import { useFixed } from '$lib/hooks/useFixed'
 	import { inPortal } from '$lib/state'
 
-  const { world } = useRapier()
+	const { world } = useRapier()
 
-  let rigidBody: RapierRigidBody
+	let rigidBody: RapierRigidBody
 
 	const portal = new THREE.Mesh()
 	const material = new THREE.MeshPhongMaterial()
@@ -19,10 +19,10 @@
 	material.stencilZPass = THREE.ReplaceStencilOp
 
 	injectPlugin('portal', ({ ref }) => {
-		let currentRef = ref;
+		let currentRef = ref
 
-		if (ref.isMesh === false) return;
-		if (ref.uuid === portal.uuid) return;
+		if (ref.isMesh === false) return
+		if (ref.uuid === portal.uuid) return
 
 		const setStencilProps = (mesh: THREE.Mesh) => {
 			const { material } = mesh
@@ -47,44 +47,40 @@
 		}
 	})
 
-  const radius = 0.7
-  const offsetY = 0.2
+	const radius = 0.7
+	const offsetY = 0.2
 
-  const handlePortalEnter = (event) => {
-    inPortal.set(event.targetRigidBody.handle, true)
-  }
+	const handlePortalEnter = (event: { targetCollider: RapierCollider; targetRigidBody: RigidBody | null }) => {
+		inPortal.set(event.targetRigidBody.handle, true)
+	}
 
-  const worldPosition = new THREE.Vector3()
-  const worldQuaternion = new THREE.Quaternion()
+	const worldPosition = new THREE.Vector3()
+	const worldQuaternion = new THREE.Quaternion()
 
-  useFixed(() => {
-    rigidBody.setTranslation(portal.getWorldPosition(worldPosition), true)
-    rigidBody.setRotation(portal.getWorldQuaternion(worldQuaternion), true)
-  }, { fixedStep: 1 / 5 })
+	useFixed(
+		() => {
+			rigidBody.setTranslation(portal.getWorldPosition(worldPosition), true)
+			rigidBody.setRotation(portal.getWorldQuaternion(worldQuaternion), true)
+		},
+		{ fixedStep: 1 / 5 }
+	)
 </script>
 
 <T.Group>
-  <T.ArrowHelper />
+	<T.ArrowHelper />
 
-  <T is={portal} position.y={radius + offsetY}>
-    <T is={material} />
-    <T.CircleGeometry
-      args={[radius, 64]}
-    />
-  </T>
+	<T is={portal} position.y={radius + offsetY}>
+		<T is={material} />
+		<T.CircleGeometry args={[radius, 64]} />
+	</T>
 
-  <T.Group position={[0, 0, -1]}>
-    <slot />
-  </T.Group>
+	<T.Group position={[0, 0, -1]}>
+		<slot />
+	</T.Group>
 </T.Group>
 
-<RigidBody bind:rigidBody type='fixed'>
-  <T.Group rotation.x={Math.PI / 2}>
-    <Collider
-      shape='cylinder'
-      args={[0.2, radius]}
-      sensor
-      on:sensorenter={handlePortalEnter}
-    />
-  </T.Group>
+<RigidBody bind:rigidBody type="fixed">
+	<T.Group rotation.x={Math.PI / 2}>
+		<Collider shape="cylinder" args={[0.2, radius]} sensor on:sensorenter={handlePortalEnter} />
+	</T.Group>
 </RigidBody>
