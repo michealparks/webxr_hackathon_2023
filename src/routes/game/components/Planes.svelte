@@ -104,7 +104,7 @@
 			<Collider
 				sensor
 				shape="cuboid"
-				args={[size.x / 2, size.z / 2, 0.35]}
+				args={[size.x / 2, size.z / 2, 0.1]}
 				on:sensorenter={handleEnter}
 			/>
 		</T.Group>
