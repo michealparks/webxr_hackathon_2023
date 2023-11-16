@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RTC Test</title>
+    <script src="https://muazkhan.com:9001/dist/RTCMultiConnection.min.js"></script>
+    <script src="https://muazkhan.com:9001/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <script>
+      var connection = new RTCMultiConnection();
+      
+      // this line is VERY_important
+      connection.socketURL = 'https://portal.epicgamer.org:9001/';
+      // test server
+      // connection.socketURL = 'https://muazkhan.com:9001/';
+      
+      // if you want text chat
+      connection.session = {
+          data: true
+      };
+      
+      connection.onopen = (event) => {
+          // connection.send('hello everyone');
+          let allParticipants = connection.getAllParticipants();
+          if (allParticipants.length === 0) {
+            // retry
+          }
+          connection.send("ready");
+
+        //   connection.getAllParticipants().forEach(function(participantId) {
+        //     console.log(participantId);
+        // });
+      };
+      
+      connection.onmessage = function(event) {
+          // alert(event.userid + ' said: ' + event.data);
+          if (event.data === "ready") {
+            // start sending data
+          }
+      };
+      
+      connection.openOrJoin('your-room-id');
+    </script>
+  </body>
+</html>
