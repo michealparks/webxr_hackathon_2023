@@ -8,6 +8,7 @@
 	import Bullets from './Bullets.svelte'
 	import PhysicsDebug from './PhysicsDebug.svelte'
 	import Headset from './Headset.svelte'
+	import HandEvents from './HandEvents.svelte'
 
 	createRatk()
 
@@ -19,6 +20,7 @@
 </script>
 
 <Headset />
+<HandEvents />
 
 <Planes>
 	<Portal>

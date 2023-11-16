@@ -3,6 +3,7 @@
 	import { RoundedBoxGeometry } from '@threlte/extras'
 	import { useRender } from '@threlte/core'
 	import { interactivity, transitions } from '@threlte/extras'
+	import { Controller, Hand } from '@threlte/xr'
 	import { tick } from 'svelte'
 	import { Flex, tailwindParser } from '@threlte/flex'
 	import Button from '$lib/components/Button.svelte'
@@ -20,6 +21,12 @@
 		renderer.render(scene, camera.current)
 	})
 </script>
+
+<Controller left />
+<Controller right />
+
+<Hand left />
+<Hand right />
 
 <T.Group position={[0, 1.8, 0]}>
 	<Flex classParser={tailwindParser} class="flex-col">

@@ -4,16 +4,23 @@
 	import { useGamepad } from '@threlte/extras'
 	import { RigidBody, Collider } from '@threlte/rapier'
 	import type { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat'
-	import { useController } from '@threlte/xr'
+	import { useController, useHand, useXR } from '@threlte/xr'
 	import { useFixed } from './hooks/useFixed'
-	import { inPortal } from '$lib/state'
+	import { inPortal, handGestureState } from '$lib/state'
 
 	const leftPad = useGamepad({ hand: 'left', xr: true })
 	const rightPad = useGamepad({ hand: 'right', xr: true })
 
+	const { isHandTracking } = useXR()
+
 	const controllers = {
 		left: useController('left'),
 		right: useController('right')
+	}
+
+	const hands = {
+		left: useHand('left'),
+		right: useHand('right')
 	}
 
 	const numBullets = 40
@@ -29,6 +36,18 @@
 	let cursor = 0
 
 	const frame = (hand: 'left' | 'right') => {
+		// Handle hands
+		if (isHandTracking.current) {
+			const hand = hands[hand].current
+			
+			if (handGestureState.firing) {
+				
+			}
+
+			return
+		}
+
+		// If not hand tracking, handle controllers
 		const targetRay = controllers[hand].current?.targetRay
 
 		if (!targetRay) return
