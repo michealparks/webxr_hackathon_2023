@@ -36,6 +36,9 @@ You can preview the production build with `npm run preview`.
   * Edited in server.js ioServer(httpApp, )
   * https://stackoverflow.com/questions/24058157/socket-io-node-js-cross-origin-request-blocked
   * https://socket.io/docs/v3/handling-cors/
+* Networking HTTPS
+  * https://github.com/muaz-khan/RTCMultiConnection-Server/wiki/How-to-Enable-HTTPs
+  * https://www.digitalocean.com/community/tutorials/how-to-set-up-apache-with-a-free-signed-ssl-certificate-on-a-vps
 * Felix portal
   * https://github.com/felixtrz/blazoid
 * STUN TURN ICE
